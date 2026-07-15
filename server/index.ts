@@ -56,9 +56,11 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Serve the app on a safe local port and allow overrides via PORT.
+  // Bind to 0.0.0.0 so the app is reachable inside containers (Railway, Docker, etc).
+  // 127.0.0.1 only accepts connections from within the same network namespace,
+  // which is why Railway's proxy couldn't reach it ("Application failed to respond").
   const port = Number(process.env.PORT || 3000);
-  const host = process.env.HOST || "127.0.0.1";
+  const host = process.env.HOST || "0.0.0.0";
 
   const shutdown = () => {
     log("shutting down server");
