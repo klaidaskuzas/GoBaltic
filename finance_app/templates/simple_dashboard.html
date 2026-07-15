@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GoBaltic Finance Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            font-weight: 600;
+        }
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 1rem 0;
+            font-size: 0.875rem;
+            border-top: 1px solid #ddd;
+        }
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+        }
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .profit-positive {
+            color: var(--secondary-color);
+        }
+        .profit-negative {
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-truck mr-2"></i> GoBaltic Finance
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('expenses') }}">
+                            <i class="fas fa-money-bill-wave me-1"></i> Expenses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('revenue') }}">
+                            <i class="fas fa-coins me-1"></i> Revenue
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog me-1"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="section-title">Financial Dashboard</h1>
+                <p class="text-muted">Overview of your financial performance</p>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card h-100 bg-light">
+                    <div class="card-body text-center">
+                        <div class="stat-icon text-primary mb-3">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-value">{{ format_currency(total_revenue) }}</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100 bg-light">
+                    <div class="card-body text-center">
+                        <div class="stat-icon text-danger mb-3">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-value">{{ format_currency(total_expenses) }}</div>
+                        <div class="stat-label">Total Expenses</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card h-100 bg-light">
+                    <div class="card-body text-center">
+                        <div class="stat-icon mb-3 {{ 'text-success' if net_profit >= 0 else 'text-danger' }}">
+                            <i class="fas {{ 'fa-arrow-trend-up' if net_profit >= 0 else 'fa-arrow-trend-down' }}"></i>
+                        </div>
+                        <div class="stat-value {{ 'profit-positive' if net_profit >= 0 else 'profit-negative' }}">
+                            {{ format_currency(net_profit) }}
+                        </div>
+                        <div class="stat-label">Net Profit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i>Finance Overview
+                    </div>
+                    <div class="card-body">
+                        {% if has_data %}
+                            <!-- Monthly Performance Chart -->
+                            <div class="mb-4">
+                                <canvas id="monthlyPerformanceChart" height="250"></canvas>
+                            </div>
+                            
+                            <!-- Monthly Data Table -->
+                            <div class="mb-4">
+                                <h5 class="mb-3">Monthly Financial Performance</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Month</th>
+                                                <th>Revenue</th>
+                                                <th>Expenses</th>
+                                                <th>Profit/Loss</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for month_data in monthly_data %}
+                                            <tr>
+                                                <td>{{ month_data.month }}</td>
+                                                <td class="text-success">{{ format_currency(month_data.revenue) }}</td>
+                                                <td class="text-danger">{{ format_currency(month_data.expenses) }}</td>
+                                                <td class="{{ 'text-success' if month_data.profit >= 0 else 'text-danger' }}">
+                                                    {{ format_currency(month_data.profit) }}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                {% if expense_by_category %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <canvas id="expenseBreakdownChart" height="260"></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-3 mb-2">Expense Breakdown</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th class="text-end">Amount</th>
+                                                    <th class="text-end">%</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for category, amount in expense_by_category.items() %}
+                                                <tr>
+                                                    <td>{{ category|capitalize }}</td>
+                                                    <td class="text-end">{{ format_currency(amount) }}</td>
+                                                    <td class="text-end">{{ "%.1f"|format(amount / total_expenses * 100) }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if revenue_by_category %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <canvas id="revenueBreakdownChart" height="260"></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5 class="mt-3 mb-2">Revenue Breakdown</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th class="text-end">Amount</th>
+                                                    <th class="text-end">%</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for category, amount in revenue_by_category.items() %}
+                                                <tr>
+                                                    <td>{{ category|capitalize }}</td>
+                                                    <td class="text-end">{{ format_currency(amount) }}</td>
+                                                    <td class="text-end">{{ "%.1f"|format(amount / total_revenue * 100) }}%</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Monthly and category charts will be available once you add financial data.
+                            </div>
+                            <div class="text-center py-4">
+                                <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                                <h5 class="text-muted">Start tracking your finances</h5>
+                                <p class="text-muted">Add expense and revenue entries to see detailed charts and analysis here.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fas fa-tasks me-2"></i>Quick Actions
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('expenses') }}" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Expense
+                            </a>
+                            <a href="{{ url_for('revenue') }}" class="btn btn-success">
+                                <i class="fas fa-plus-circle me-2"></i>Add New Revenue
+                            </a>
+                            <a href="{{ url_for('settings') }}" class="btn btn-secondary">
+                                <i class="fas fa-cog me-2"></i>Manage Categories
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2025 GoBaltic Finance Management. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% if has_data %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Monthly Financial Performance Chart
+            if(document.getElementById('monthlyPerformanceChart')) {
+                const ctx = document.getElementById('monthlyPerformanceChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [{% for month_data in monthly_data %}'{{ month_data.month }}',{% endfor %}],
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: [{% for month_data in monthly_data %}{{ month_data.revenue }},{% endfor %}],
+                                backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                                borderColor: 'rgba(40, 167, 69, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Expenses',
+                                data: [{% for month_data in monthly_data %}{{ month_data.expenses }},{% endfor %}],
+                                backgroundColor: 'rgba(220, 53, 69, 0.5)',
+                                borderColor: 'rgba(220, 53, 69, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Profit/Loss',
+                                data: [{% for month_data in monthly_data %}{{ month_data.profit }},{% endfor %}],
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1,
+                                type: 'line'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Amount (€)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Monthly Financial Performance',
+                                font: {
+                                    size: 16
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Expense Breakdown Pie Chart
+            if(document.getElementById('expenseBreakdownChart')) {
+                const ctx = document.getElementById('expenseBreakdownChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: [{% for category, amount in expense_by_category.items() %}'{{ category|capitalize }}',{% endfor %}],
+                        datasets: [{
+                            data: [{% for category, amount in expense_by_category.items() %}{{ amount }},{% endfor %}],
+                            backgroundColor: [
+                                'rgba(220, 53, 69, 0.7)',
+                                'rgba(255, 193, 7, 0.7)',
+                                'rgba(40, 167, 69, 0.7)',
+                                'rgba(0, 123, 255, 0.7)',
+                                'rgba(111, 66, 193, 0.7)',
+                                'rgba(23, 162, 184, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Expense Breakdown',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Revenue Breakdown Pie Chart
+            if(document.getElementById('revenueBreakdownChart')) {
+                const ctx = document.getElementById('revenueBreakdownChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: [{% for category, amount in revenue_by_category.items() %}'{{ category|capitalize }}',{% endfor %}],
+                        datasets: [{
+                            data: [{% for category, amount in revenue_by_category.items() %}{{ amount }},{% endfor %}],
+                            backgroundColor: [
+                                'rgba(40, 167, 69, 0.7)',
+                                'rgba(0, 123, 255, 0.7)',
+                                'rgba(111, 66, 193, 0.7)',
+                                'rgba(255, 193, 7, 0.7)',
+                                'rgba(23, 162, 184, 0.7)',
+                                'rgba(220, 53, 69, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Revenue Breakdown',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

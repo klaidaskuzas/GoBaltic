@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Priority pages
+Allow: /services
+Allow: /about
+Allow: /contact
+
+# Sitemap location
+Sitemap: https://gobaltic.lt/sitemap.xml
+
+# Disallow admin pages
+Disallow: /dashboard

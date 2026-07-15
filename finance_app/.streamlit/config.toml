@@ -1,0 +1,13 @@
+[browser]
+gatherUsageStats = false
+
+[server]
+port = 8501
+address = "0.0.0.0"
+headless = true
+enableCORS = false
+
+[runner]
+magicEnabled = true
+installTracer = false
+fixMatplotlib = true

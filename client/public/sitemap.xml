@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://gobaltic.lt/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gobaltic.lt/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="lt" href="https://gobaltic.lt/?lang=lt"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://gobaltic.lt/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://gobaltic.lt/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://gobaltic.lt/?lang=nl"/>
+  </url>
+  
+  <!-- Services Page -->
+  <url>
+    <loc>https://gobaltic.lt/services</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gobaltic.lt/services?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="lt" href="https://gobaltic.lt/services?lang=lt"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://gobaltic.lt/services?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://gobaltic.lt/services?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://gobaltic.lt/services?lang=nl"/>
+  </url>
+  
+  <!-- About Page -->
+  <url>
+    <loc>https://gobaltic.lt/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gobaltic.lt/about?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="lt" href="https://gobaltic.lt/about?lang=lt"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://gobaltic.lt/about?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://gobaltic.lt/about?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://gobaltic.lt/about?lang=nl"/>
+  </url>
+  
+  <!-- Contact Page -->
+  <url>
+    <loc>https://gobaltic.lt/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://gobaltic.lt/contact?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="lt" href="https://gobaltic.lt/contact?lang=lt"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://gobaltic.lt/contact?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://gobaltic.lt/contact?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://gobaltic.lt/contact?lang=nl"/>
+  </url>
+  
+</urlset>

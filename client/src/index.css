@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --grid-size: 100px;
+}
+
+.bg-grid-gray-200\/50 {
+  background-image: linear-gradient(to right, rgba(229, 231, 235, 0.5) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(229, 231, 235, 0.5) 1px, transparent 1px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
